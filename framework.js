@@ -1,7 +1,9 @@
 const { exec } = require('child_process');
 const { existsSync } = require('fs');
-const https = require('https');
 const { createWriteStream } = require('fs');
+const fs = require('fs');
+const https = require('https');
+const path = require('path');
 let theme = document.getElementById('theme');
 let os = document.getElementById('os');
 let button = document.getElementById('button');
@@ -322,6 +324,20 @@ function process(markdown) {
         </html>
         `
         }
+        const folderPath = path.join(process.env.USERPROFILE, documentsFolder, folderName);
+        if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath, { recursive: true });
+        }
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+        const day = currentDate.getDate();
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+        const seconds = currentDate.getSeconds();
+        const timestamp = `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+        const filePath = path.join("DocApp", `${timestamp}-doc.html`);
+        fs.writeFileSync(filePath, markdown, 'utf-8');
         return markdown;
       }
     });
